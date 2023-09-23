@@ -7,15 +7,18 @@ import 'package:rent_minder/screen/splash.dart';
 import 'package:rent_minder/screen/widgets/bottom_nav.dart';
 import 'package:rent_minder/screen/menu.dart';
 import 'package:appwrite/appwrite.dart';
-import 'package:rent_minder/constants/credentials.dart';
+import 'package:provider/provider.dart';
+import 'package:rent_minder/appwrite/auth_api.dart';
 
 Client client = Client();
 
 void main() {
-  client.setEndpoint(Credentials.APIEndpoint)
-      .setProject(Credentials.ProjectID)
-      .setSelfSigned(status: true);
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => AuthAPI(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -24,6 +27,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final value = context.watch<AuthAPI>().status;
+    print('TOP CHANGE Value changed to: $value!');
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
@@ -54,7 +59,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: const SplashView(),
+      home: value == AuthStatus.uninitialized
+          ? const SplashView()
+          : value == AuthStatus.authenticated
+          ? const BottomNavBar()
+          : const Login(),
     );
   }
 }

@@ -1,8 +1,9 @@
+import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:rent_minder/screen/widgets/text_box.dart';
-
-import '../../apis/Apis.dart';
+import 'package:rent_minder/appwrite/auth_api.dart';
 import '../../utils/app_style.dart';
 import '../widgets/button.dart';
 
@@ -16,23 +17,59 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool loading = false;
 
-  Future<void> signIn() async {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Logging in...')));
+  signIn() async {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const Dialog(
+            backgroundColor: Colors.transparent,
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  CircularProgressIndicator(),
+                ]),
+          );
+        });
+
     try {
-      await APIs.instance.loginEmailPassword(
-        emailController.text,
-        passwordController.text,
-      ).then((result) {
-        if(result) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Logged in')));
-          Navigator.of(context).pushNamed('/menu');
-        }else{
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Invalid')));
-        }
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text(e.toString())));
+      final AuthAPI appwrite = context.read<AuthAPI>();
+      await appwrite.createEmailSession(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      Navigator.pop(context);
+    } on AppwriteException catch (e) {
+      Navigator.pop(context);
+      showAlert(title: 'Login failed', text: e.message.toString());
+    }
+  }
+
+  showAlert({required String title, required String text}) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(text),
+            actions: [
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Ok'))
+            ],
+          );
+        });
+  }
+
+  signInWithProvider(String provider) {
+    try {
+      context.read<AuthAPI>().signInWithProvider(provider: provider);
+    } on AppwriteException catch (e) {
+      showAlert(title: 'Login failed', text: e.message.toString());
     }
   }
 
