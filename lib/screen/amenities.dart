@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'dart:io';
-
+import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:rent_minder/appwrite/database_api.dart';
 import 'package:rent_minder/screen/widgets/shimmer.dart';
-import '../model/amenities.dart';
 import '../utils/app_style.dart';
 import 'widgets/app_bar.dart';
 
@@ -16,21 +15,30 @@ class Amenities extends StatefulWidget {
 }
 
 class _AmenitiesState extends State<Amenities> {
-  List<AmenitiesModel> amenitiesData = [];
-  bool isLoading = false;
+  final database = DatabaseAPI();
+  late List<Document>? amenities = [];
+  late bool isLoading;
   bool isFabVisible = true;
 
   @override
   void initState(){
+    isLoading = true;
+    Future.delayed(const Duration(seconds: 3), () {
+      setState(() => isLoading = false);
+    });
     super.initState();
     loadData();
   }
 
-  Future loadData() async{
-    setState(() => isLoading = true);
-    // await Future.delayed(const Duration(seconds: 3), () => print("3 sec later"));
-    amenitiesData = List.of(amenitiesList);
-    setState(() => isLoading = false);
+  loadData() async{
+    try {
+      final value = await database.amenitiesDataList();
+      setState(() {
+        amenities = value.documents;
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -52,13 +60,13 @@ class _AmenitiesState extends State<Amenities> {
         },
         child: Center(
           child: ListView.builder(
-            itemCount: amenitiesData.length,
+            itemCount: amenities?.length ?? 0,
             itemBuilder: (BuildContext context, index) {
               if (isLoading){
                 return buildShimmer();
               } else {
-                final amenities = amenitiesData[index];
-                return buildAmenities(amenities);
+                final amenity = amenities![index];
+                return buildAmenities(amenity);
               }
             }
           ),
@@ -88,9 +96,9 @@ Widget buildShimmer(){
   );
 }
 
-Widget buildAmenities(AmenitiesModel amenities){
+Widget buildAmenities(amenity){
   return ListTile(
-    title:  Text(amenities.name, style: Styles.listTextColor,),
+    title:  Text(amenity.data['name'], style: Styles.listTextColor,),
     leading: Container(
       decoration:BoxDecoration(
           color: Styles.primaryColor,
@@ -99,7 +107,7 @@ Widget buildAmenities(AmenitiesModel amenities){
       padding: const EdgeInsets.all(10),
       child: SizedBox(
         height: 30,
-        child: Image.asset(amenities.image, color: Colors.white,),
+        child: Image.asset('assets/icons/${amenity.data['img']}', color: Colors.white,),
       ),
     ),
   );
