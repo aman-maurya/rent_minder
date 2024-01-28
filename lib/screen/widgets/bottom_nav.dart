@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:rent_minder/screen/menu.dart';
 import 'package:rent_minder/utils/app_style.dart';

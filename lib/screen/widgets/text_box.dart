@@ -1,41 +1,94 @@
 import 'package:flutter/material.dart';
+import 'package:form_validator/form_validator.dart';
+import '../../utils/app_style.dart';
 
-class TextBoxWidget extends StatelessWidget {
-  const TextBoxWidget({Key? key, required this.controller,
+class TextBoxWidget extends StatefulWidget {
+  const TextBoxWidget({Key? key,
+    required this.controller,
     required this.hintText,
     required this.textInputType,
-    required this.obscure}) : super(key: key);
+    this.obscure = false,
+    this.errorMaxLen = 1,
+    this.validator,
+    this.prefixIcon,
+    this.actionKeyboard = TextInputAction.next,
+    this.focusNode
+  }) : super(key: key);
+
   final TextEditingController controller;
   final String hintText;
   final TextInputType textInputType;
   final bool obscure;
+  final int errorMaxLen;
+  final Widget? prefixIcon;
+  final String? Function(String?)? validator;
+  final TextInputAction? actionKeyboard;
+  final FocusNode? focusNode;
+
+  @override
+  State<TextBoxWidget> createState() => _TextBoxWidgetState();
+
+}
+
+class _TextBoxWidgetState extends State<TextBoxWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 50,
-      padding: const EdgeInsets.only(top: 0, left: 15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(6),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 7
-          )
-        ]
+    return Theme(
+      data: Theme.of(context).copyWith(
+        primaryColor: Styles.primaryColor,
       ),
       child: TextFormField(
-        controller: controller,
-        keyboardType: textInputType,
-        obscureText: obscure,
+        cursorColor: Styles.primaryColor,
+        controller: widget.controller,
+        validator: widget.validator,
+        keyboardType: widget.textInputType,
+        textInputAction: widget.actionKeyboard,
+        focusNode: widget.focusNode,
+        obscureText: widget.obscure,
+        style: TextStyle(
+            backgroundColor: Colors.white,
+            color: Styles.colorBlack,
+            fontSize: 16.0,
+            fontWeight: FontWeight.w200,
+            fontStyle: FontStyle.normal,
+            letterSpacing: 1.2,
+        ),
         decoration: InputDecoration(
-          hintText: hintText,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.all(0),
+          prefixIcon: widget.prefixIcon,
+          hintText: widget.hintText,
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.all(15),
+          isDense: true,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4.0),
+            borderSide: BorderSide.none,
+          ),
+          errorStyle: TextStyle(
+            color: Styles.colorRed,
+            fontSize: 15.0,
+            fontWeight: FontWeight.w500,
+            fontStyle: FontStyle.normal,
+            letterSpacing: 1.2,
+          ),
           hintStyle: const TextStyle(
-            height: 1
-          )
+            color: Colors.grey,
+            fontSize: 15.0,
+            fontWeight: FontWeight.w500,
+            fontStyle: FontStyle.normal,
+            letterSpacing: 1.2,
+          ),
+          errorMaxLines: widget.errorMaxLen,
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Styles.primaryColor),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Styles.colorRed),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Styles.colorRed),
+          ),
         ),
       ),
     );

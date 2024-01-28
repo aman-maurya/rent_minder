@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rent_minder/screen/amenities.dart';
+import 'package:rent_minder/screen/amenity/add_amenity.dart';
 import 'package:rent_minder/screen/auth/login.dart';
 import 'package:rent_minder/screen/auth/signup.dart';
 import 'package:rent_minder/screen/splash.dart';
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         '/signup': (BuildContext context) => const SignUp(),
         '/menu': (BuildContext context) => const Menu(),
         '/amenities': (BuildContext context) => const Amenities(),
+        '/add_amenity': (BuildContext context) => const AddAmenity(),
       },
       theme: ThemeData(
         // This is the theme of your application.

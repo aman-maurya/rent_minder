@@ -6,6 +6,8 @@ class Styles{
   static Color bottomNavBarBg = Colors.deepPurple;
   static Color bottomNavBarTab = Colors.deepPurple.shade50;
   static Color bottomNavLabel = Colors.white;
+  static Color colorBlack = const Color(0xff000000);
+  static Color colorRed = const Color(0xffC44137);
   static TextStyle bottomNavBarTabBtn = GoogleFonts.openSans(
       textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17, color: Color(0xFF283593))
   );

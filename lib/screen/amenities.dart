@@ -78,7 +78,7 @@ class _AmenitiesState extends State<Amenities> {
         elevation: 0,
         shape: const CircleBorder(side: BorderSide.none),
         onPressed: () {
-          // Respond to button press
+          Navigator.pushNamed(context, '/add_amenity');
         },
         child: const Icon(Icons.add),
       ) : null,

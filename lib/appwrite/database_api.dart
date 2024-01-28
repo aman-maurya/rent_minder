@@ -28,4 +28,15 @@ class DatabaseAPI {
         databaseId: APPWRITE_DATABASE_ID
     );
   }
+
+  Future<Document> addAmenity({required String name}) {
+    return databases.createDocument(
+        databaseId: APPWRITE_DATABASE_ID,
+        collectionId: AMENITIES_COLLECTION,
+        documentId: ID.unique(),
+        data: {
+          'name': name,
+          'img': 'default.png',
+        });
+  }
 }
