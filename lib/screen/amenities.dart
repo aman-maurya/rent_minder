@@ -3,6 +3,7 @@ import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:rent_minder/appwrite/database_api.dart';
+import 'package:rent_minder/screen/widgets/confirm_dialog.dart';
 import 'package:rent_minder/screen/widgets/shimmer.dart';
 import '../utils/app_style.dart';
 import 'widgets/app_bar.dart';
@@ -21,7 +22,7 @@ class _AmenitiesState extends State<Amenities> {
   bool isFabVisible = true;
 
   @override
-  void initState(){
+  void initState() {
     isLoading = true;
     Future.delayed(const Duration(seconds: 3), () {
       setState(() => isLoading = false);
@@ -30,7 +31,7 @@ class _AmenitiesState extends State<Amenities> {
     loadData();
   }
 
-  loadData() async{
+  loadData() async {
     try {
       final value = await database.amenitiesDataList();
       setState(() {
@@ -50,65 +51,107 @@ class _AmenitiesState extends State<Amenities> {
       backgroundColor: Styles.appBgColor,
       appBar: MyAppBar(title: title),
       body: NotificationListener<UserScrollNotification>(
-        onNotification: (notification){
-          if(notification.direction == ScrollDirection.forward){
-            if(!isFabVisible) setState(() => isFabVisible = true);
-          }else if(notification.direction == ScrollDirection.reverse){
-            if(isFabVisible) setState(() => isFabVisible = false);
+        onNotification: (notification) {
+          if (notification.direction == ScrollDirection.forward) {
+            if (!isFabVisible) setState(() => isFabVisible = true);
+          } else if (notification.direction == ScrollDirection.reverse) {
+            if (isFabVisible) setState(() => isFabVisible = false);
           }
           return true;
         },
         child: Center(
           child: ListView.builder(
-            itemCount: amenities?.length ?? 0,
-            itemBuilder: (BuildContext context, index) {
-              if (isLoading){
-                return buildShimmer();
-              } else {
-                final amenity = amenities![index];
-                return buildAmenities(amenity);
-              }
-            }
-          ),
+              itemCount: amenities?.length ?? 0,
+              itemBuilder: (BuildContext context, index) {
+                if (isLoading) {
+                  return buildShimmer();
+                } else {
+                  final amenity = amenities![index];
+                  return buildAmenities(context, amenity);
+                }
+              }),
         ),
       ),
-      floatingActionButton: isFabVisible ? FloatingActionButton(
-        backgroundColor: Styles.primaryColor,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        shape: const CircleBorder(side: BorderSide.none),
-        onPressed: () {
-          Navigator.pushNamed(context, '/add_amenity');
-        },
-        child: const Icon(Icons.add),
-      ) : null,
+      floatingActionButton: isFabVisible
+          ? FloatingActionButton(
+              backgroundColor: Styles.primaryColor,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: const CircleBorder(side: BorderSide.none),
+              onPressed: () {
+                Navigator.pushNamed(context, '/add_amenity');
+              },
+              child: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 }
 
-Widget buildShimmer(){
+Widget buildShimmer() {
   return const ListTile(
-    leading: ShimmerWidget.circular(
-        width: 45,
-        height: 45
-    ),
+    leading: ShimmerWidget.circular(width: 45, height: 45),
     title: ShimmerWidget.rectangular(height: 16),
   );
 }
 
-Widget buildAmenities(amenity){
+Widget buildAmenities(BuildContext context, amenity) {
   return ListTile(
-    title:  Text(amenity.data['name'], style: Styles.listTextColor,),
+    title: Text(
+      amenity.data['name'],
+      style: Styles.listTextColor,
+    ),
     leading: Container(
-      decoration:BoxDecoration(
+      decoration: BoxDecoration(
           color: Styles.primaryColor,
-          borderRadius: const BorderRadius.all(Radius.circular(25))
-      ),
+          borderRadius: const BorderRadius.all(Radius.circular(25))),
       padding: const EdgeInsets.all(10),
       child: SizedBox(
         height: 30,
-        child: Image.asset('assets/icons/${amenity.data['img']}', color: Colors.white,),
+        child: Image.asset(
+          'assets/icons/${amenity.data['img']}',
+          color: Colors.white,
+        ),
       ),
+    ),
+    trailing: PopupMenuButton(
+      itemBuilder: (BuildContext context) {
+        // Define the menu items for the PopupMenuButton
+        return [
+          PopupMenuItem(
+            padding: EdgeInsets.zero,
+            value: amenity.$id,
+            child: ListTile(
+              leading: const Icon(Icons.edit),
+              title: Text('Edit',
+                style: Styles.popUpMenuTextColor,
+              ),
+            ),
+          ),
+          PopupMenuItem(
+            padding: EdgeInsets.zero,
+            value: amenity.$id,
+            onTap: (){
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return ConfirmDialog(
+                    callback: () {
+
+                    },
+                  );
+                },
+              );
+            },
+            child: ListTile(
+              leading: const Icon(Icons.delete),
+              title: Text('Delete',
+                style: Styles.popUpMenuTextColor,
+              ),
+            ),
+          ),
+        ];
+      },
     ),
   );
 }

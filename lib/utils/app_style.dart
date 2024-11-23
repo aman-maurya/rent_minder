@@ -32,4 +32,28 @@ class Styles{
           fontWeight: FontWeight.w700
       )
   );
+
+  static TextStyle popUpMenuTextColor = GoogleFonts.openSans(
+      textStyle: const TextStyle(
+          color: Colors.black87,
+          fontSize: 14,
+          fontWeight: FontWeight.w700
+      )
+  );
+
+  static TextStyle alertBoxBtn = GoogleFonts.openSans(
+      textStyle: TextStyle(
+          color: Styles.primaryColor,
+          fontSize: 16,
+          fontWeight: FontWeight.w700
+      )
+  );
+
+  static TextStyle alertBoxMsg = GoogleFonts.openSans(
+      textStyle: const TextStyle(
+          color: Colors.black87,
+          fontSize: 16,
+          fontWeight: FontWeight.normal
+      )
+  );
 }

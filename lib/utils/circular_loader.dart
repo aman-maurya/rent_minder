@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'app_style.dart';
-
 class LoadingIndicatorDialog {
   static final LoadingIndicatorDialog _singleton = LoadingIndicatorDialog._internal();
   late BuildContext _context;
