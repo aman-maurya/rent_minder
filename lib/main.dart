@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rent_minder/screen/amenities.dart';
+import 'package:rent_minder/screen/amenity/amenities.dart';
 import 'package:rent_minder/screen/amenity/add_amenity.dart';
 import 'package:rent_minder/screen/auth/login.dart';
 import 'package:rent_minder/screen/auth/signup.dart';

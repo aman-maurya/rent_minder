@@ -5,8 +5,8 @@ import 'package:flutter/rendering.dart';
 import 'package:rent_minder/appwrite/database_api.dart';
 import 'package:rent_minder/screen/widgets/confirm_dialog.dart';
 import 'package:rent_minder/screen/widgets/shimmer.dart';
-import '../utils/app_style.dart';
-import 'widgets/app_bar.dart';
+import '../../utils/app_style.dart';
+import '../widgets/app_bar.dart';
 
 class Amenities extends StatefulWidget {
   const Amenities({Key? key}) : super(key: key);
@@ -45,7 +45,7 @@ class _AmenitiesState extends State<Amenities> {
   @override
   Widget build(BuildContext context) {
     final routeArgs =
-        ModalRoute.of(context)?.settings?.arguments as Map<String, String>;
+        ModalRoute.of(context)?.settings.arguments as Map<String, String>;
     final title = routeArgs['title'].toString();
     return Scaffold(
       backgroundColor: Styles.appBgColor,

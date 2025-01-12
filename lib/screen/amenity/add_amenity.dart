@@ -57,7 +57,7 @@ class _AddAmenityState extends State<AddAmenity> {
                   errorMaxLen: 2,
                   validator: ValidationBuilder()
                       .ignoreSpecialChr()
-                      .maxLength(40)
+                      .maxLength(50)
                       .build(),
                   textInputType: TextInputType.name,
                 ),
