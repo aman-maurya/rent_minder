@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import '../../utils/app_style.dart';
 
 class ConfirmDialog extends StatelessWidget {
-  const ConfirmDialog({Key? key
+  const ConfirmDialog({super.key
     , this.message = 'Are you sure you want to delete?'
     , this.boxHeading = 'Confirm'
-    , required this.callback,
-  }) : super(key: key);
+    , required this.callback
+    , this.itemName
+  });
   final String message;
   final String boxHeading;
   final VoidCallback callback;
+  final dynamic itemName;
 
   Widget cancelButton(BuildContext context) => TextButton(
     child: Text("Cancel", style: Styles.alertBoxBtn,),
@@ -26,10 +28,29 @@ class ConfirmDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(boxHeading, style: const TextStyle(
-          fontWeight: FontWeight.w700
-      ),),
-      content: Text(message, style: Styles.alertBoxMsg,),
+      title: Text(boxHeading, style: Styles.appBarHeading,),
+      //content: Text(message, style: Styles.alertBoxMsg,)
+      content: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: itemName != null && itemName!.isNotEmpty
+                  ? 'Are you sure you want to delete '
+                  : 'Are you sure you want to delete?'  // Default message
+              , style: Styles.alertBoxMsg,
+            ),
+            if (itemName != null && itemName!.isNotEmpty)
+              TextSpan(
+                text: itemName,  // Display the item name in bold if available
+                style: Styles.alertBoxItem,
+              ),
+            TextSpan(
+              text: itemName != null && itemName!.isNotEmpty ? '?' : ''  // Add the question mark only if itemName exists
+              , style: Styles.alertBoxMsg,
+            ),
+          ],
+        ),
+      ),
       actions: [
         cancelButton(context),
         continueButton(context),

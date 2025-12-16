@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../utils/app_style.dart';
 
 class SplashView extends StatefulWidget {
-  const SplashView({Key? key}) : super(key: key);
+  const SplashView({super.key});
 
   @override
   State<SplashView> createState() => _SplashViewState();

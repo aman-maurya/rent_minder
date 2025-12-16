@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:form_validator/form_validator.dart';
 import '../../utils/app_style.dart';
 
 class TextBoxWidget extends StatefulWidget {
-  const TextBoxWidget({Key? key,
+  const TextBoxWidget({super.key,
     required this.controller,
     required this.hintText,
     required this.textInputType,
@@ -13,7 +12,7 @@ class TextBoxWidget extends StatefulWidget {
     this.prefixIcon,
     this.actionKeyboard = TextInputAction.next,
     this.focusNode
-  }) : super(key: key);
+  });
 
   final TextEditingController controller;
   final String hintText;

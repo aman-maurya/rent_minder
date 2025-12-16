@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:rent_minder/helpers/logger.dart';
+import 'app_style.dart';
 
 class LoadingIndicatorDialog {
   static final LoadingIndicatorDialog _singleton = LoadingIndicatorDialog._internal();
@@ -11,7 +13,7 @@ class LoadingIndicatorDialog {
 
   LoadingIndicatorDialog._internal();
 
-  show(BuildContext context, {String text = 'Loading..'}) {
+  show(BuildContext context, {String text = ''}) {
     if(isDisplayed) {
       return;
     }
@@ -26,14 +28,14 @@ class LoadingIndicatorDialog {
             child: Center(
             child:
               Container(
-                width: 120,
-                height: 120,
+                //width: text.isNotEmpty ? 120 : 0,
+                //height: text.isNotEmpty ? 120 : 0,
                 decoration: BoxDecoration(
-                    color: Colors.white,
+                    //color: Colors.white,
                     borderRadius: BorderRadius.circular(6),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 10,
                       )
                     ]
@@ -42,9 +44,11 @@ class LoadingIndicatorDialog {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                           const Padding(
-                            padding: EdgeInsets.only(left: 5, top: 5, right: 5),
-                            child: CircularProgressIndicator(),
+                           Padding(
+                            padding: const EdgeInsets.only(left: 5, top: 5, right: 5),
+                            child: CircularProgressIndicator(
+                              color: Styles.primaryColor,
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 16),
@@ -70,9 +74,13 @@ class LoadingIndicatorDialog {
   }
 
   dismiss() {
-    if(isDisplayed) {
-      Navigator.of(_context).pop();
-      isDisplayed = false;
+    if (isDisplayed && _context.mounted) {
+      try {
+        Navigator.of(_context, rootNavigator: true).pop();
+        isDisplayed = false;
+      } catch (e) {
+        logError(e as Exception);
+      }
     }
   }
 }

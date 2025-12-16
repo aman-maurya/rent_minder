@@ -15,28 +15,64 @@ class DatabaseAPI {
 
   init() {
     client
-        .setEndpoint(APPWRITE_URL)
-        .setProject(APPWRITE_PROJECT_ID)
+        .setEndpoint(appwriteUrl)
+        .setProject(appwriteProjectId)
         .setSelfSigned();
     account = Account(client);
     databases = Databases(client);
   }
 
-  Future<DocumentList> amenitiesDataList() {
-    return databases.listDocuments(
-        collectionId: AMENITIES_COLLECTION,
-        databaseId: APPWRITE_DATABASE_ID
-    );
+  Future<DocumentList> amenitiesDataList({int limit = 25, int offset = 0}) {
+      final documentList = databases.listDocuments(
+        collectionId: amenitiesCollection,
+        databaseId: appwriteDatabaseId,
+        queries: [
+          Query.limit(limit),  // Limit the number of documents to fetch
+          Query.offset(offset),  // Skip the first 'offset' number of records
+        ],
+      );
+
+      return documentList;  // Return the list of documents
   }
 
-  Future<Document> addAmenity({required String name}) {
+  Future<Document> addAmenity({required String name, required double price}) {
     return databases.createDocument(
-        databaseId: APPWRITE_DATABASE_ID,
-        collectionId: AMENITIES_COLLECTION,
+        databaseId: appwriteDatabaseId,
+        collectionId: amenitiesCollection,
         documentId: ID.unique(),
         data: {
           'name': name,
           'img': 'default.png',
+          'price': price,
         });
+  }
+
+  // Method to delete an amenity by its document ID
+  Future<bool> deleteAmenity({required String documentId}) async {
+    try {
+      await databases.deleteDocument(
+        databaseId: appwriteDatabaseId,
+        collectionId: amenitiesCollection,
+        documentId: documentId,
+      );
+
+      return true;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<Document?> getAmenityById({required String documentId}) async {
+    try {
+      final document = await databases.getDocument(
+        databaseId: appwriteDatabaseId,
+        collectionId: amenitiesCollection,
+        documentId: documentId,
+      );
+
+      return document;
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 }

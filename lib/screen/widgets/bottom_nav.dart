@@ -4,7 +4,7 @@ import 'package:rent_minder/screen/menu.dart';
 import 'package:rent_minder/utils/app_style.dart';
 
 class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({Key? key}) : super(key: key);
+  const BottomNavBar({super.key});
 
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();

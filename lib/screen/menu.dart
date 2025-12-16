@@ -3,7 +3,7 @@ import '../utils/app_style.dart';
 import 'widgets/icon_button.dart';
 
 class Menu extends StatefulWidget {
-  const Menu({Key? key}) : super(key: key);
+  const Menu({super.key});
 
   @override
   State<Menu> createState() => _MenuState();

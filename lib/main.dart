@@ -29,7 +29,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final value = context.watch<AuthAPI>().status;
-    print('TOP CHANGE Value changed to: $value!');
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
