@@ -11,7 +11,9 @@ class TextBoxWidget extends StatefulWidget {
     this.validator,
     this.prefixIcon,
     this.actionKeyboard = TextInputAction.next,
-    this.focusNode
+    this.focusNode,
+    this.maxLines = 1,
+    this.minLines,
   });
 
   final TextEditingController controller;
@@ -23,6 +25,8 @@ class TextBoxWidget extends StatefulWidget {
   final String? Function(String?)? validator;
   final TextInputAction? actionKeyboard;
   final FocusNode? focusNode;
+  final int maxLines;
+  final int? minLines;
 
   @override
   State<TextBoxWidget> createState() => _TextBoxWidgetState();
@@ -45,6 +49,8 @@ class _TextBoxWidgetState extends State<TextBoxWidget> {
         textInputAction: widget.actionKeyboard,
         focusNode: widget.focusNode,
         obscureText: widget.obscure,
+        maxLines: widget.maxLines,
+        minLines: widget.minLines,
         style: TextStyle(
             backgroundColor: Colors.white,
             color: Styles.colorBlack,

@@ -227,7 +227,9 @@ class _AddBuildingState extends State<AddBuilding> {
                 TextBoxWidget(
                   controller: addressController,
                   hintText: 'Address (optional)',
-                  errorMaxLen: 2,
+                  errorMaxLen: 3,
+                  maxLines: 4,
+                  minLines: 3,
                   validator: ValidationBuilder(optional: true)
                       .maxLength(200)
                       .build(),
