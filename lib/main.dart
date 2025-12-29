@@ -4,6 +4,8 @@ import 'package:rent_minder/screen/amenity/amenities.dart';
 import 'package:rent_minder/screen/amenity/add_amenity.dart';
 import 'package:rent_minder/screen/auth/login.dart';
 import 'package:rent_minder/screen/auth/signup.dart';
+import 'package:rent_minder/screen/building/building.dart';
+import 'package:rent_minder/screen/building/add_building.dart';
 import 'package:rent_minder/screen/splash.dart';
 import 'package:rent_minder/screen/widgets/bottom_nav.dart';
 import 'package:rent_minder/screen/menu.dart';
@@ -38,6 +40,8 @@ class MyApp extends StatelessWidget {
         '/menu': (BuildContext context) => const Menu(),
         '/amenities': (BuildContext context) => const Amenities(),
         '/add_amenity': (BuildContext context) => const AddAmenity(),
+        '/building': (BuildContext context) => const Building(),
+        '/add_building': (BuildContext context) => const AddBuilding(),
       },
       theme: ThemeData(
         // This is the theme of your application.

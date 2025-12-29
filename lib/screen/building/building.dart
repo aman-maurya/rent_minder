@@ -11,26 +11,25 @@ import '../../helpers/snackbar.dart';
 import '../../utils/app_style.dart';
 import '../../utils/circular_loader.dart';
 
-class Amenities extends StatefulWidget {
+class Building extends StatefulWidget {
   final String snackbarMessage;
 
-  const Amenities({super.key, this.snackbarMessage = ''});
+  const Building({super.key, this.snackbarMessage = ''});
 
   @override
-  State<Amenities> createState() => _AmenitiesState();
+  State<Building> createState() => _BuildingState();
 }
 
-class _AmenitiesState extends State<Amenities> {
+class _BuildingState extends State<Building> {
   final database = DatabaseAPI();
-  late List<Document> amenities = [];
+  late List<Document> buildings = [];
   bool isLoading = false;
   bool isFabVisible = true;
   bool _snackbarShown = false;
-  int limit = 25; // Number of items per page
-  int offset = 0; // Start from the first page
-  bool hasMoreData = true; // To check if there are more records to load
+  int limit = 25;
+  int offset = 0;
+  bool hasMoreData = true;
 
-  // Loader instance for showing loading dialog
   final loader = LoadingIndicatorDialog();
 
   @override
@@ -42,32 +41,21 @@ class _AmenitiesState extends State<Amenities> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Check if a new amenity was added and reload the list
-    final result = ModalRoute.of(context)?.settings.arguments;
-    if (result == true) {
-      setState(() {
-        amenities.clear();
-        offset = 0;
-        hasMoreData = true;
-      });
-      loadData(); // Reload data when returning from Add Amenity
-    }
   }
 
-  // Fetch the data with pagination
   Future<void> loadData() async {
-    if (isLoading || !hasMoreData) return; // Prevent multiple calls or unnecessary calls
+    if (isLoading || !hasMoreData) return;
 
     setState(() {
       isLoading = true;
     });
 
     try {
-      final value = await database.amenitiesDataList(limit: limit, offset: offset);
+      final value = await database.buildingsDataList(limit: limit, offset: offset);
       setState(() {
-        amenities.addAll(value.documents); // Add the fetched amenities to the list
-        offset += limit; // Increment the offset for the next fetch
-        hasMoreData = value.documents.length == limit; // If the fetched data is less than the limit, there are no more records
+        buildings.addAll(value.documents);
+        offset += limit;
+        hasMoreData = value.documents.length == limit;
       });
     } catch (e) {
       logError(e as Exception);
@@ -87,8 +75,6 @@ class _AmenitiesState extends State<Amenities> {
           SnackbarHelper.showSuccess(context, widget.snackbarMessage);
         }
       });
-
-      // Set the flag to true to prevent the snackbar from showing again
       setState(() {
         _snackbarShown = true;
       });
@@ -97,10 +83,7 @@ class _AmenitiesState extends State<Amenities> {
     return Scaffold(
       backgroundColor: Styles.appBgColor,
       appBar: AppBar(
-        title: Text(
-          'Amenities',
-          style: Styles.appBarHeading,
-        ),
+        title: Text('Buildings', style: Styles.appBarHeading),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Styles.appBgColor,
@@ -113,57 +96,55 @@ class _AmenitiesState extends State<Amenities> {
             if (isFabVisible) setState(() => isFabVisible = false);
           }
 
-          // Check if the user reached the end of the list to load more data
           if (notification.metrics.pixels == notification.metrics.maxScrollExtent) {
-            loadData(); // Load more data when reaching the bottom
+            loadData();
           }
 
           return true;
         },
-        child: amenities.isEmpty && !isLoading
+        child: buildings.isEmpty && !isLoading
             ? Center(
-          child: Text(
-            'No amenities found.',
-            style: Styles.listTextColor,
-          ),
-        )
+                child: Text('No buildings found.', style: Styles.listTextColor),
+              )
             : RefreshIndicator(
-          onRefresh: () async {
-            setState(() {
-              amenities.clear();
-              offset = 0;
-              hasMoreData = true;
-            });
-            await loadData();
-          },
-          child: ListView.builder(
-            itemCount: amenities.length + (isLoading ? 25 : 0), // Show 25 shimmer items when loading
-            itemBuilder: (BuildContext context, index) {
-              if (index < amenities.length) {
-                // Show actual data
-                final amenity = amenities[index];
-                return buildAmenities(context, amenity);
-              } else {
-                // Show shimmer effect for loading items
-                return buildShimmer();
-              }
-            },
-          ),
-        ),
+                onRefresh: () async {
+                  setState(() {
+                    buildings.clear();
+                    offset = 0;
+                    hasMoreData = true;
+                  });
+                  await loadData();
+                },
+                child: ListView.builder(
+                  itemCount: buildings.length + (isLoading ? 25 : 0),
+                  itemBuilder: (BuildContext context, index) {
+                    if (index < buildings.length) {
+                      final building = buildings[index];
+                      return buildBuilding(context, building);
+                    } else {
+                      return buildShimmer();
+                    }
+                  },
+                ),
+              ),
       ),
       floatingActionButton: isFabVisible
           ? FloatingActionButton(
-        backgroundColor: Styles.primaryColor,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        shape: const CircleBorder(side: BorderSide.none),
-        onPressed: () {
-          Navigator.pushNamed(context, '/add_amenity', arguments: {
-            'action':'Add'
-          });
-        },
-        child: const Icon(Icons.add),
-      )
+              backgroundColor: Styles.primaryColor,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: const CircleBorder(side: BorderSide.none),
+              onPressed: () async {
+                final result = await Navigator.pushNamed(
+                  context,
+                  '/add_building',
+                  arguments: {'action': 'Add'},
+                );
+
+                _showMessage(context, result);
+              },
+              child: const Icon(Icons.add),
+            )
           : null,
     );
   }
@@ -175,18 +156,18 @@ class _AmenitiesState extends State<Amenities> {
     );
   }
 
-  Widget buildAmenities(BuildContext context, Document amenity) {
+  Widget buildBuilding(BuildContext context, Document building) {
     return ListTile(
       title: Text(
-        amenity.data['name'].toString().toTitleCase(),
+        building.data['name'].toString().toTitleCase(),
         style: Styles.listTextColor,
       ),
-      leading: _buildAmenityIcon(amenity),
-      trailing: _buildPopupMenu(context, amenity),
+      leading: _buildBuildingIcon(building),
+      trailing: _buildPopupMenu(context, building),
     );
   }
 
-  Widget _buildAmenityIcon(Document amenity) {
+  Widget _buildBuildingIcon(Document building) {
     return Container(
       decoration: BoxDecoration(
         color: Styles.primaryColor,
@@ -196,14 +177,14 @@ class _AmenitiesState extends State<Amenities> {
       child: SizedBox(
         height: 30,
         child: Image.asset(
-          'assets/icons/${amenity.data['img']}',
+          building.data.containsKey('img') ? 'assets/icons/${building.data['img']}' : 'assets/icons/building.png',
           color: Colors.white,
         ),
       ),
     );
   }
 
-  Widget _buildPopupMenu(BuildContext context, Document amenity) {
+  Widget _buildPopupMenu(BuildContext context, Document building) {
     return PopupMenuButton(
       itemBuilder: (BuildContext context) {
         return [
@@ -229,59 +210,79 @@ class _AmenitiesState extends State<Amenities> {
       },
       onSelected: (value) async {
         if (value == 'edit') {
-          _handleEditAmenity(context, amenity);
+          _handleEditBuilding(context, building);
         } else if (value == 'delete') {
-          _handleDeleteAmenity(context, amenity);
+          _handleDeleteBuilding(context, building);
         }
       },
     );
   }
 
-  void _handleEditAmenity(BuildContext context, Document amenity) {
-    // Handle edit action
-    Navigator.pushNamed(context, '/add_amenity', arguments: {
-      'action':'Update',
-      'data': amenity.data
-    });
+  void _showMessage(BuildContext context, Object? result){
+    if (!mounted) return;
+
+    // handle result returned from AddBuilding
+    if (result is Map && result['ok'] == true) {
+      // RESET pagination & data FIRST
+      setState(() {
+        buildings.clear();
+        offset = 0;
+        hasMoreData = true;
+      });
+
+      loadData();
+
+      final action = result['action'] ?? 'Add';
+      SnackbarHelper.showSuccess(
+        context,
+        action == 'Add'
+            ? 'Building added successfully.'
+            : 'Building updated successfully.',
+      );
+    }
   }
 
-  void _handleDeleteAmenity(BuildContext context, Document amenity) async {
-    // Common prefix for print statements to identify the operation
-    // final String prefix = "[Delete Amenity]";
+  void _handleEditBuilding(BuildContext context, Document building) async {
+    final result = await Navigator.pushNamed(context, '/add_building', arguments: {
+      'action': 'Update',
+      'data': building.data
+    });
+
+    _showMessage(context, result);
+  }
+
+  void _handleDeleteBuilding(BuildContext context, Document building) async {
     final scaffoldContext = context;
 
-    // Show the confirmation dialog before deleting
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return ConfirmDialog(
-          itemName: amenity.data['name'].toString().toTitleCase(), // Pass the amenity name
+          itemName: building.data['name'].toString().toTitleCase(),
           callback: () async {
-            Navigator.of(context).pop(); // Close the dialog
-            loader.show(context); // Show loading indicator
+            Navigator.of(context).pop();
+            loader.show(context);
 
             try {
-              bool success = await database.deleteAmenity(documentId: amenity.$id);
+              bool success = await database.deleteBuilding(documentId: building.$id);
 
               if (success) {
                 setState(() {
-                  amenities.removeWhere((element) => element.$id == amenity.$id); // Remove amenity from the list
+                  buildings.removeWhere((element) => element.$id == building.$id);
                 });
 
-                // Show success Snackbar after the frame is rendered
                 if (mounted) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     if (mounted) {
-                      SnackbarHelper.showSuccess(scaffoldContext, 'Amenity deleted successfully.');
+                      SnackbarHelper.showSuccess(scaffoldContext, 'Building deleted successfully.');
                     }
                   });
                 }
-
               } else {
                 if (mounted) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     if (mounted) {
-                      SnackbarHelper.showError(scaffoldContext, 'Failed to delete amenity.');
+                      SnackbarHelper.showError(scaffoldContext, 'Failed to delete building.');
                     }
                   });
                 }
@@ -296,7 +297,6 @@ class _AmenitiesState extends State<Amenities> {
               }
               logError(e as Exception);
             } finally {
-              // Ensure loader is dismissed
               loader.dismiss();
             }
           },

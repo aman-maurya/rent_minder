@@ -8,7 +8,6 @@ import '../../utils/app_style.dart';
 import '../../utils/circular_loader.dart';
 import '../widgets/button.dart';
 import '../widgets/text_box.dart';
-import 'amenities.dart';
 
 class AddAmenity extends StatefulWidget {
   const AddAmenity({super.key});
@@ -81,7 +80,11 @@ class _AddAmenityState extends State<AddAmenity> {
     if (mounted) {
       //Navigator.of(context).popUntil(ModalRoute.withName('/amenities'));
       Navigator.pop(context, {'added': true});
-      SnackbarHelper.showSuccess(context, 'Amenity added successfully!');
+      if(action == 'Update') {
+        SnackbarHelper.showSuccess(context, 'Amenity updated successfully!');
+      }else {
+        SnackbarHelper.showSuccess(context, 'Amenity added successfully!');
+      }
     }
   }
 

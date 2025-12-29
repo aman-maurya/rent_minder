@@ -91,7 +91,7 @@ class _MenuState extends State<Menu> {
                   icon: 'assets/icons/building.png',
                   bgColor: Colors.pink,
                   iconColor: Colors.white,
-                  screenName: '/amenities',
+                  screenName: '/building',
               ),
               IconWidget(
                   name: 'Rooms',

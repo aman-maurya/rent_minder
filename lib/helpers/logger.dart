@@ -1,7 +1,10 @@
 import 'package:flutter/foundation.dart';
 
-void logError(Exception e) {
+void logError(Object error, [StackTrace? stackTrace]) {
   if (kDebugMode) {
-    print('Exception: $e');
+    debugPrint('ERROR: $error');
+    if (stackTrace != null) {
+      debugPrint('STACKTRACE:\n$stackTrace');
+    }
   }
 }
